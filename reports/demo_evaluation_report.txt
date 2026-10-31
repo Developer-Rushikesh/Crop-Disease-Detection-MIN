@@ -1,0 +1,11 @@
+FloraScan AI - Demo Model Evaluation Report
+=============================================
+Architecture: MobileNetV2 (Frozen Base + Dense Head)
+Input Resolution: 224x224x3
+Batch Size: 8
+Epochs: 3
+Training Samples: 141
+Training Time: 17.59 s
+Final Train Accuracy: 97.16%
+Final Validation Accuracy: 81.67%
+Final Validation Loss: 0.6130

@@ -1,0 +1,433 @@
+{% extends 'detector/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="upload-page-wrapper">
+    <div class="page-container">
+        
+        <!-- Page Header -->
+        <div class="page-header text-center">
+            <span class="section-tag">Neural Foliar Analysis</span>
+            <h1 class="page-title">Upload Leaf Image & Detect Disease</h1>
+            <p class="page-subtitle">
+                Select your crop type (Apple or Tomato), upload a leaf photo, or pick from our verified test samples for instant diagnosis with symptoms and care recommendations.
+            </p>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- DIAGNOSIS RESULT SECTION (Shown directly when image is evaluated) -->
+        <!-- ================================================================= -->
+        {% if prediction_data %}
+        <div class="result-container-on-page" id="diagnosisResultSection">
+            
+            <div class="result-section-header">
+                <span class="section-tag">Diagnosis Completed</span>
+                <h2 class="section-title">Detection Result for {{ prediction_data.selected_plant }}</h2>
+            </div>
+
+            <!-- Warning Alert (if any mismatch or uncertainty detected) -->
+            {% if prediction_data.warning_message %}
+            <div class="alert alert-warning" id="resultWarningAlert">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-body">
+                    <strong>Attention Required:</strong>
+                    <p>{{ prediction_data.warning_message }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Main Diagnosis Hero Card -->
+            <div class="diagnosis-hero-card {% if prediction_data.disease_info.is_healthy %}state-healthy{% else %}state-diseased{% endif %}">
+                
+                <!-- Left Side: Uploaded Leaf Image -->
+                <div class="diagnosis-media-col">
+                    <div class="leaf-image-container">
+                        <img src="{{ prediction_data.image_url }}" alt="Diagnosed leaf photo" class="leaf-result-img" id="resultImage">
+                        <div class="leaf-badge-overlay">
+                            <span class="crop-tag">{{ prediction_data.selected_plant }}</span>
+                        </div>
+                    </div>
+                    <div class="image-actions">
+                        <a href="{{ prediction_data.image_url }}" target="_blank" class="link-view-full" id="viewFullImageLink">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 3 21 3 21 9"/>
+                                <polyline points="9 21 3 21 3 15"/>
+                                <line x1="21" y1="3" x2="14" y2="10"/>
+                                <line x1="3" y1="21" x2="10" y2="14"/>
+                            </svg>
+                            View Full Size Photo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Side: Diagnosis & Confidence Summary -->
+                <div class="diagnosis-info-col">
+                    <div class="diagnosis-status-pill">
+                        {% if prediction_data.disease_info.is_healthy %}
+                            <span class="status-indicator-dot dot-green"></span>
+                            <span class="status-text text-green">Foliage Healthy</span>
+                        {% else %}
+                            <span class="status-indicator-dot dot-red"></span>
+                            <span class="status-text text-red">Pathogen Detected ({{ prediction_data.disease_info.severity }} Severity)</span>
+                        {% endif %}
+                    </div>
+
+                    <h2 class="diagnosis-title" id="diseaseTitle">
+                        {{ prediction_data.display_name }}
+                    </h2>
+                    
+                    <p class="scientific-name">
+                        Scientific Classification: <em>{{ prediction_data.disease_info.scientific_name }}</em>
+                    </p>
+
+                    <p class="disease-summary">
+                        {{ prediction_data.disease_info.description }}
+                    </p>
+
+                    <!-- Confidence Score Meter -->
+                    <div class="confidence-meter-box">
+                        <div class="meter-header">
+                            <span class="meter-title">Prediction Confidence</span>
+                            <span class="meter-score" id="confidenceScore">{{ prediction_data.confidence }}%</span>
+                        </div>
+                        
+                        <div class="progress-track">
+                            <div class="progress-bar {% if prediction_data.confidence > 80 %}bar-high{% elif prediction_data.confidence > 60 %}bar-mid{% else %}bar-low{% endif %}" 
+                                 data-progress-width="{{ prediction_data.confidence }}"></div>
+                        </div>
+                        
+                        <div class="meter-footer">
+                            <span>Reliability: 
+                                {% if prediction_data.confidence >= 85 %}
+                                    <strong class="text-green">Very High</strong>
+                                {% elif prediction_data.confidence >= 65 %}
+                                    <strong class="text-warning">High</strong>
+                                {% else %}
+                                    <strong class="text-red">Moderate / Needs Verification</strong>
+                                {% endif %}
+                            </span>
+                            <span>Model: MobileNetV2 (PlantVillage)</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="diagnosis-cta-row">
+                        <a href="{% url 'detector:download_report' %}" class="btn btn-primary" id="downloadPdfReportBtn">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download PDF Report
+                        </a>
+
+                        <a href="#uploadFormSection" class="btn btn-outline" id="detectAnotherScrollBtn">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"/>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                            </svg>
+                            Detect Another Image
+                        </a>
+                        
+                        <button type="button" class="btn btn-subtle" onclick="window.print()" id="printReportBtn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 6 2 18 2 18 9"/>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                                <rect x="6" y="14" width="12" height="8"/>
+                            </svg>
+                            Print
+                        </button>
+                    </div>
+
+                    <div class="result-disclaimer-subtle">
+                        <small>⚠️ <em>Disclaimer: Predictions are automated deep learning estimates and not a substitute for professional agricultural pathology testing.</em></small>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Detailed Pathology Cards Grid -->
+            <div class="details-cards-grid">
+                <!-- Symptoms Card -->
+                <div class="detail-card">
+                    <div class="card-header-icon ic-amber">🔍</div>
+                    <h3 class="card-heading">Key Diagnostic Symptoms</h3>
+                    <ul class="detail-list">
+                        {% for symptom in prediction_data.disease_info.symptoms %}
+                        <li>
+                            <span class="bullet-dot">•</span>
+                            <span>{{ symptom }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Prevention Card -->
+                <div class="detail-card">
+                    <div class="card-header-icon ic-green">🛡️</div>
+                    <h3 class="card-heading">Prevention Strategies</h3>
+                    <ul class="detail-list">
+                        {% for prev in prediction_data.disease_info.prevention %}
+                        <li>
+                            <span class="bullet-dot">✓</span>
+                            <span>{{ prev }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Treatment Card -->
+                <div class="detail-card">
+                    <div class="card-header-icon ic-blue">💊</div>
+                    <h3 class="card-heading">Recommended Treatment</h3>
+                    <ul class="detail-list">
+                        {% for treat in prediction_data.disease_info.treatment %}
+                        <li>
+                            <span class="bullet-dot">→</span>
+                            <span>{{ treat }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Causative Environment -->
+                <div class="detail-card">
+                    <div class="card-header-icon ic-purple">🌡️</div>
+                    <h3 class="card-heading">Causative Environment</h3>
+                    <p class="cause-text">
+                        {{ prediction_data.disease_info.causes }}
+                    </p>
+                    <div class="cause-tip">
+                        <strong>Optimal management tip:</strong> Regulate irrigation and leaf canopy moisture to mitigate pathogen proliferation.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 3 Probability Breakdown -->
+            <div class="breakdown-card">
+                <h3 class="breakdown-title">Top 3 Predictions from Machine Learning Model</h3>
+                <p class="breakdown-subtitle">Probability distribution across trained PlantVillage classes:</p>
+                
+                <div class="predictions-table-wrapper">
+                    <table class="predictions-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Identified Class</th>
+                                <th>Confidence</th>
+                                <th>Probability Bar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in prediction_data.top_3 %}
+                            <tr>
+                                <td class="rank-col">#{{ forloop.counter }}</td>
+                                <td class="name-col">
+                                    <strong>{{ item.display_name }}</strong>
+                                    <span class="raw-class-tag">{{ item.raw_name }}</span>
+                                </td>
+                                <td class="conf-col">{{ item.confidence }}%</td>
+                                <td class="bar-col">
+                                    <div class="mini-progress-track">
+                                        <div class="mini-progress-bar" data-progress-width="{{ item.confidence }}"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="divider-section">
+                <hr>
+                <span class="divider-badge">Upload / Test Another Image Below</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ================================================================= -->
+        <!-- UPLOAD FORM SECTION                                               -->
+        <!-- ================================================================= -->
+        <div class="upload-card" id="uploadFormSection">
+            
+            {% if form.errors or form.non_field_errors %}
+            <div class="alert alert-error" id="formErrorAlert">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-body">
+                    <strong>Validation Error:</strong>
+                    <ul>
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'detector:upload' %}" enctype="multipart/form-data" id="diseaseUploadForm">
+                {% csrf_token %}
+                <input type="hidden" name="sample_image" id="selectedSampleInput" value="">
+
+                <!-- Step 1: Plant Selection Radio Cards -->
+                <div class="form-step-group">
+                    <label class="step-label">
+                        <span class="step-badge">1</span>
+                        <span>Select Crop Type:</span>
+                    </label>
+
+                    <div class="plant-select-grid">
+                        <label class="plant-radio-card {% if selected_plant == 'apple' %}selected{% endif %}" id="appleOption">
+                            <input type="radio" name="plant" value="apple" class="plant-radio-input" {% if selected_plant == 'apple' %}checked{% endif %}>
+                            <div class="radio-card-content">
+                                <span class="radio-icon">🍎</span>
+                                <div class="radio-info">
+                                    <h4 class="radio-title">Apple</h4>
+                                    <span class="radio-desc">Malus domestica</span>
+                                </div>
+                                <div class="radio-check">✓</div>
+                            </div>
+                        </label>
+
+                        <label class="plant-radio-card {% if selected_plant == 'tomato' %}selected{% endif %}" id="tomatoOption">
+                            <input type="radio" name="plant" value="tomato" class="plant-radio-input" {% if selected_plant == 'tomato' %}checked{% endif %}>
+                            <div class="radio-card-content">
+                                <span class="radio-icon">🍅</span>
+                                <div class="radio-info">
+                                    <h4 class="radio-title">Tomato</h4>
+                                    <span class="radio-desc">Solanum lycopersicum</span>
+                                </div>
+                                <div class="radio-check">✓</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 2: Upload Leaf File or Drag and Drop -->
+                <div class="form-step-group">
+                    <label class="step-label">
+                        <span class="step-badge">2</span>
+                        <span>Upload Leaf Photograph (JPG, JPEG, or PNG):</span>
+                    </label>
+
+                    <div class="dropzone-area" id="dropzoneArea">
+                        <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/jpg" class="file-hidden-input">
+                        
+                        <!-- Default Idle State inside Dropzone -->
+                        <div class="dropzone-idle" id="dropzoneIdle">
+                            <div class="dropzone-icon">
+                                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.75">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </div>
+                            <h4 class="dropzone-title">Drag & drop your leaf photo here</h4>
+                            <p class="dropzone-hint">or <span class="browse-link">browse files</span> from your computer</p>
+                            <span class="dropzone-limits">Supported: JPG, JPEG, PNG • Maximum size: 5 MB</span>
+                        </div>
+
+                        <!-- Active Preview State inside Dropzone -->
+                        <div class="dropzone-preview" id="dropzonePreview" style="display: none;">
+                            <div class="preview-media-container">
+                                <img src="" alt="Selected leaf preview" id="previewImg" class="preview-image">
+                                <button type="button" class="btn-remove-preview" id="removePreviewBtn" title="Remove image">
+                                    ✕
+                                </button>
+                            </div>
+                            <div class="preview-meta">
+                                <span class="preview-filename" id="previewFilename">leaf_image.jpg</span>
+                                <span class="preview-filesize" id="previewFilesize">1.2 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Test Samples Gallery -->
+                <div class="samples-section">
+                    <div class="samples-header">
+                        <span class="samples-title">🧪 Or Test With 1-Click Verified Samples:</span>
+                        <span class="samples-subtitle">Click any sample below to instantly load and test with authentic PlantVillage leaf photos:</span>
+                    </div>
+
+                    <div class="samples-grid" id="samplesGrid">
+                        {% for s in samples %}
+                        <div class="sample-chip" data-sample-id="{{ s.id }}" data-plant="{{ s.plant }}" data-img-url="{% static 'images/' %}{{ s.filename }}">
+                            <img src="{% static 'images/' %}{{ s.filename }}" alt="{{ s.label }}" class="chip-thumb">
+                            <div class="chip-info">
+                                <span class="chip-name">{{ s.label }}</span>
+                                <span class="chip-badge {{ s.badge_class }}">{{ s.badge }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-submit-row">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" id="detectSubmitBtn">
+                        <span class="btn-text">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            Detect Plant Disease
+                        </span>
+                        <span class="btn-spinner" style="display: none;">
+                            <svg class="spinner-icon" viewBox="0 0 50 50">
+                                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                            </svg>
+                            Analyzing Leaf with ML Model...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Testing Tips & Guidelines -->
+        <div class="tips-card">
+            <h3 class="tips-title">💡 Tips for Best Prediction Accuracy</h3>
+            <div class="tips-grid">
+                <div class="tip-item">
+                    <span class="tip-icon">☀️</span>
+                    <div>
+                        <strong>Good Lighting:</strong> Take photo in daylight without dark cast shadows or glare.
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🔍</span>
+                    <div>
+                        <strong>Focused Close-up:</strong> Frame a single leaf showing visible spots or green tissue clearly.
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🌿</span>
+                    <div>
+                        <strong>Plain Background:</strong> Avoid busy soil, fingers, or clutter behind the leaf.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set dynamic progress bar widths from data attributes (prevents inline CSS linter warnings)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[data-progress-width]').forEach(function(el) {
+            var val = el.getAttribute('data-progress-width');
+            if (val) {
+                el.style.width = val + '%';
+            }
+        });
+    });
+</script>
+{% endblock %}

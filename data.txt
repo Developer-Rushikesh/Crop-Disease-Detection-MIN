@@ -1,0 +1,146 @@
+# Project Prompt: Plant Disease Detection Using Machine Learning
+
+Build a simple, beginner-friendly **Plant Disease Detection Web Application** using Machine Learning.
+
+## 1. Project Overview
+Create a web application where users can select a plant, upload its leaf image, and detect whether the plant is healthy or has a disease. The application should display the predicted disease name and a short description.
+
+Keep the project simple and suitable for a college mini-project. Do not add unnecessary advanced features.
+
+## 2. Technology Stack
+- **Backend:** Python, Django
+- **Frontend:** HTML, CSS, JavaScript
+- **Machine Learning:** TensorFlow/Keras or a suitable pretrained image classification model
+- **Image Processing:** Pillow
+- **Database:** SQLite
+- **Model:** A real trained ML model for plant disease classification
+
+## 3. Plants Supported
+Initially, support only these two plants:
+
+1. **Tomato**
+2. **Potato**
+
+The user must select a plant before uploading an image.
+
+## 4. Main Features
+
+### Home Page
+- Display the project name: Plant Disease Detection System.
+- Show a short introduction.
+- Provide two plant selection cards: Tomato and Potato.
+- Add a button to start disease detection.
+
+### Image Upload Page
+- Allow the user to select Tomato or Potato.
+- Allow the user to upload a leaf image in JPG, JPEG, or PNG format.
+- Display the uploaded image preview using JavaScript.
+- Add a Detect Disease button.
+- Validate that the user has selected a plant and uploaded an image.
+
+### ML Disease Detection
+- Pass the uploaded image from the Django backend to the ML model.
+- Preprocess the image according to the model's requirements.
+- Predict the disease class and confidence score.
+- Ensure the selected plant matches the model's supported classes.
+- Do not generate random predictions or hardcode a fake disease result.
+
+Use a real trained model compatible with the selected plant classes. If a suitable model is not included, explain how to download or train one using a publicly available plant disease dataset, such as PlantVillage.
+
+### Result Page
+Display:
+- Uploaded leaf image
+- Selected plant name
+- Predicted disease name
+- Prediction confidence percentage
+- A simple explanation of the disease
+- Basic care or prevention suggestions
+- A button to detect another image
+
+If the model is uncertain or the image is unsuitable, show an appropriate warning instead of presenting the prediction as certain.
+
+## 5. Suggested Disease Classes
+Use only the classes supported by the trained model.
+
+**Tomato examples:**
+- Healthy
+- Early Blight
+- Late Blight
+- Bacterial Spot
+
+**Potato examples:**
+- Healthy
+- Early Blight
+- Late Blight
+
+Do not claim that all these classes are supported unless the trained model actually recognizes them.
+
+## 6. Django Structure
+Organize the project clearly:
+
+plant_disease_detection/
+- manage.py
+- plant_disease_detection/
+  - settings.py
+  - urls.py
+- detector/
+  - views.py
+  - urls.py
+  - forms.py
+  - ml_model.py
+  - templates/
+    - home.html
+    - upload.html
+    - result.html
+  - static/
+    - css/style.css
+    - js/script.js
+- models/
+  - plant_disease_model.keras
+- media/
+- requirements.txt
+- README.md
+
+Adjust the structure if necessary to keep it functional.
+
+## 7. UI Design
+Create a clean, responsive, agriculture-themed interface:
+- Green and white color combination
+- Simple navigation bar
+- Plant selection cards with images
+- Image preview before upload
+- Clear disease result section
+- Responsive layout for mobile and desktop
+- Simple CSS animations
+
+Avoid complex dashboards, login systems, payment systems, and unnecessary pages.
+
+## 8. Backend Requirements
+- Use Django views and URL routing.
+- Handle image uploads securely.
+- Validate image file types and sizes.
+- Save uploaded images in the media directory.
+- Load the trained ML model efficiently instead of reloading it for every prediction.
+- Show understandable error messages.
+- Never execute predictions using a fake or random model.
+
+## 9. How You Must Build the Project
+Build the project step by step for a beginner.
+
+1. Explain the project architecture.
+2. Provide commands to create the virtual environment and install dependencies.
+3. Create the Django project and application.
+4. Implement the frontend pages.
+5. Implement image upload and validation.
+6. Set up the real ML model and its required class labels.
+7. Integrate model predictions with Django.
+8. Display the prediction results.
+9. Explain how to run and test the project locally.
+10. Provide a README with setup instructions and project limitations.
+
+For every file, provide its complete code and explain its purpose in simple language.
+
+## 10. Final Goal
+The user should be able to open the website, select Tomato or Potato, upload a leaf photo, click Detect Disease, and see the ML model's prediction with a confidence score and basic care suggestions.
+
+Keep the application small, understandable, functional, and suitable for a beginner's college project. Prioritize correct ML integration over unnecessary features.

@@ -1,0 +1,224 @@
+{% extends 'detector/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-container">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>AI Agricultural Health Screening</span>
+        </div>
+        
+        <h1 class="hero-title">
+            FloraScan AI <span class="text-gradient">Plant Disease Detection</span>
+        </h1>
+        
+        <p class="hero-description">
+            A fast, accessible machine learning tool designed to identify common foliar diseases in Apple and Tomato crops from leaf photographs. Upload an image to analyze symptoms, review preventative measures, and generate a downloadable pathology report.
+        </p>
+        
+        <div class="hero-actions">
+            <a href="{% url 'detector:upload' %}" class="btn btn-primary btn-lg" id="heroStartBtn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                Start Disease Detection
+            </a>
+            <a href="#plants" class="btn btn-outline btn-lg" id="heroExploreBtn">
+                View Supported Crops
+            </a>
+        </div>
+
+        <!-- AI Disclaimer Banner -->
+        <div class="disclaimer-banner-home">
+            <span class="disclaimer-icon">⚠️</span>
+            <p>
+                <strong>AI Estimate Disclaimer:</strong> FloraScan AI outputs are automated estimates derived from computer vision models. Results should be used as preliminary screening guidance and not as a substitute for certified agronomist inspection or laboratory testing.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Supported Crops Section -->
+<section class="plants-section" id="plants">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Supported Crops</span>
+            <h2 class="section-title">Select a Plant to Diagnose</h2>
+            <p class="section-subtitle">
+                FloraScan AI currently evaluates foliar images for Apple and Tomato crops. Select your crop below to start detection:
+            </p>
+        </div>
+
+        <div class="plant-cards-grid">
+            <!-- Apple Card -->
+            <div class="plant-card" id="appleCard">
+                <div class="plant-card-media">
+                    <img src="{% static 'images/apple_healthy.jpg' %}" alt="Apple Foliage" class="plant-img">
+                    <div class="plant-tag">Malus domestica</div>
+                </div>
+                <div class="plant-card-body">
+                    <div class="plant-card-header">
+                        <div class="plant-icon-box" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">🍎</div>
+                        <div>
+                            <h3 class="plant-name">Apple</h3>
+                            <span class="plant-family">Rosaceae Family</span>
+                        </div>
+                    </div>
+                    <p class="plant-desc">
+                        Identify Apple Scab, Black Rot (frogeye leaf spot), and Cedar Apple Rust early to protect orchard yields and foliage.
+                    </p>
+
+                    <div class="diseases-list-box">
+                        <span class="list-title">Supported Classes:</span>
+                        <div class="disease-pills">
+                            <span class="pill pill-success">Healthy Leaf</span>
+                            <span class="pill pill-danger">Apple Scab</span>
+                            <span class="pill pill-danger">Black Rot</span>
+                            <span class="pill pill-warning">Cedar Apple Rust</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'detector:upload' %}?plant=apple" class="btn btn-primary btn-block" id="diagnoseAppleBtn">
+                        Diagnose Apple Leaf &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tomato Card -->
+            <div class="plant-card" id="tomatoCard">
+                <div class="plant-card-media">
+                    <img src="{% static 'images/tomato_healthy.jpg' %}" alt="Tomato Foliage" class="plant-img">
+                    <div class="plant-tag">Solanum lycopersicum</div>
+                </div>
+                <div class="plant-card-body">
+                    <div class="plant-card-header">
+                        <div class="plant-icon-box tomato-color">🍅</div>
+                        <div>
+                            <h3 class="plant-name">Tomato</h3>
+                            <span class="plant-family">Nightshade Family</span>
+                        </div>
+                    </div>
+                    <p class="plant-desc">
+                        Detect Early Blight (Alternaria linariae) and inspect foliar health early to prevent vine defoliation and fruit damage.
+                    </p>
+                    
+                    <div class="diseases-list-box">
+                        <span class="list-title">Supported Classes:</span>
+                        <div class="disease-pills">
+                            <span class="pill pill-success">Healthy Leaf</span>
+                            <span class="pill pill-danger">Early Blight</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'detector:upload' %}?plant=tomato" class="btn btn-primary btn-block" id="diagnoseTomatoBtn">
+                        Diagnose Tomato Leaf &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Simple Three-Step Workflow Section -->
+<section class="workflow-section">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-tag">How It Works</span>
+            <h2 class="section-title">Simple 3-Step Process</h2>
+            <p class="section-subtitle">
+                Fast foliar screening with instant reports generated on a single page.
+            </p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <h3 class="step-title">1. Select a Plant</h3>
+                <p class="step-desc">
+                    Choose Tomato or Potato to establish the expected biological pathology profile.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </div>
+                <h3 class="step-title">2. Upload a Leaf Image</h3>
+                <p class="step-desc">
+                    Drag and drop a clear JPG or PNG photograph, or select from verified benchmark test samples.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <h3 class="step-title">3. View Prediction & Get Report</h3>
+                <p class="step-desc">
+                    Inspect the diagnosis, confidence score, prevention guidance, and download an official PDF report.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Small Technology Stack Section -->
+<section class="tech-section" id="tech">
+    <div class="section-container">
+        <div class="tech-card">
+            <span class="section-tag">Technology Stack</span>
+            <h2 class="tech-heading">Built with Modern Open-Source Technologies</h2>
+            <p class="tech-intro">
+                A clean Django full-stack application using optimized Convolutional Neural Network inference.
+            </p>
+
+            <div class="tech-grid-simple">
+                <div class="tech-box">
+                    <strong>Backend Framework</strong>
+                    <span>Python 3.12 & Django 5.0 (MVT)</span>
+                </div>
+                <div class="tech-box">
+                    <strong>Neural Network</strong>
+                    <span>MobileNetV2 (PlantVillage Weights)</span>
+                </div>
+                <div class="tech-box">
+                    <strong>Inference Engine</strong>
+                    <span>TensorFlow Lite (<50ms CPU Runtime)</span>
+                </div>
+                <div class="tech-box">
+                    <strong>Image Processing</strong>
+                    <span>Pillow (PIL RGB Preprocessing)</span>
+                </div>
+                <div class="tech-box">
+                    <strong>Report Generation</strong>
+                    <span>ReportLab PDF Document Engine</span>
+                </div>
+                <div class="tech-box">
+                    <strong>Frontend Interface</strong>
+                    <span>Responsive HTML5, Vanilla CSS & JS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

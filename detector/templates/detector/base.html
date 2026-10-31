@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AI-Powered Plant Disease Detection System for Apple and Tomato crops using Deep Learning and Convolutional Neural Networks.">
+    <meta name="keywords"
+        content="plant disease detection, apple scab, black rot, cedar rust, tomato early blight, machine learning, deep learning, agriculture AI, PlantVillage">
+    <title>{{ page_title|default:"Plant Disease Detection System | AI Crop Health" }}</title>
+
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <!-- Top Navigation Header -->
+    <header class="navbar-wrapper">
+        <div class="nav-container">
+            <a href="{% url 'detector:home' %}" class="nav-brand" id="brandLink">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                        <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">FloraScan AI</span>
+                    <span class="brand-subtitle">Plant Disease Detection</span>
+                </div>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="{% url 'detector:home' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" id="navHome">
+                    Home
+                </a>
+                <a href="{% url 'detector:upload' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'upload' %}active{% endif %}"
+                    id="navUpload">
+                    Diagnose Leaf
+                </a>
+            </nav>
+            <div class="nav-actions">
+                <a href="{% url 'detector:upload' %}" class="btn btn-primary btn-sm" id="navDiagnoseBtn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" />
+                        <line x1="16" y1="5" x2="22" y2="5" />
+                        <line x1="19" y1="2" x2="19" y2="8" />
+                    </svg>
+                    Start Detection
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-brand-header">
+                        <div class="brand-icon-sm">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                            </svg>
+                        </div>
+                        <h3>Plant Disease Detection System</h3>
+                    </div>
+                    <p>
+                        A machine learning powered web application designed for rapid detection and management of foliar
+                        diseases in Apple and Tomato crops using Convolutional Neural Networks.
+                    </p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Crops Supported</h4>
+                    <ul>
+                        <li><a href="{% url 'detector:upload' %}?plant=apple">Apple (Apple Scab, Black Rot, Cedar Rust,
+                                Healthy)</a></li>
+                        <li><a href="{% url 'detector:upload' %}?plant=tomato">Tomato (Early Blight, Healthy)</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-tech">
+                    <h4>Technology Stack</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Django 5</span>
+                        <span class="tech-tag">TensorFlow</span>
+                        <span class="tech-tag">PlantVillage</span>
+                        <span class="tech-tag">MobileNetV2</span>
+                        <span class="tech-tag">SQLite</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Plant Disease Detection System — College Mini-Project Implementation.</p>
+                <p class="footer-note">Designed for academic research and educational demonstration.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main Javascript -->
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

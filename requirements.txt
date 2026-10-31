@@ -1,0 +1,26 @@
+# ==============================================================================
+# FloraScan AI — Python Package Dependencies
+# Python 3.10 - 3.12 Compatible
+# ==============================================================================
+
+# Core Web Framework
+Django>=5.0.0,<5.1.0
+
+# Deep Learning & Computer Vision
+tensorflow>=2.15.0
+keras>=3.0.0
+Pillow>=10.0.0
+numpy>=1.26.0
+
+# Data Science, Evaluation & Training Metrics
+scikit-learn>=1.4.0
+matplotlib>=3.8.0
+
+# PDF Pathology Report Generation
+reportlab>=4.0.0
+
+# Technical Documentation Generation
+python-docx>=1.1.0
+
+# Optional HTTP / Utility Libraries
+requests>=2.31.0
